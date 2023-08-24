@@ -32,7 +32,7 @@ Sub 开始汇总()
         Set xlBook_3 = xlApp_3.Workbooks.Open(sourceFilePath_3)  '打开指定路径指定名称文件
     End If
     ' 不显示WPS界面
-    xlApp_3.Visible = True
+    xlApp_3.Visible = False
     
     Form1.ListView1.ListItems.Clear               '清空列表
     Form1.ListView1.ColumnHeaders.Clear           '清空列表头
@@ -44,6 +44,31 @@ Sub 开始汇总()
     ' 获取项目名称
     ' 找到最后一行
     lastRow_3_1 = xlsheet_3_1.Application.WorksheetFunction.CountA(xlsheet_3_1.range("A:A"))
+    Dim lastColumn_3_1 As Integer
+    Dim FindColumnNumber_1_1 As Integer, FindColumnNumber_1_2 As Integer, FindColumnNumber_1_3 As Integer, FindColumnNumber_1_4 As Integer, FindColumnNumber_1_5 As Integer, FindColumnNumber_1_6 As Integer
+    
+    lastColumn_3_1 = xlsheet_3_1.UsedRange.Columns.Count
+    For Column = 1 To lastColumn_3_1
+        k = xlsheet_3_1.cells(3, Column).Value
+        If k = "项目名称" Then
+            FindColumnNumber_1_1 = Column
+        End If
+        If k = "专业名称" Then
+            FindColumnNumber_1_2 = Column
+        End If
+        If k = "设计投资汇总      （万元）" Then
+            FindColumnNumber_1_3 = Column
+        End If
+        If k = "工建创建任务汇总（个）" Then
+            FindColumnNumber_1_4 = Column
+        End If
+        If k = "设计编制完成汇总（个）" Then
+            FindColumnNumber_1_5 = Column
+        End If
+        If k = "设计编制未完成汇总（个）" Then
+            FindColumnNumber_1_6 = Column
+        End If
+    Next Column
     
     ' 初始化两个字典，保存家宽和专线项目名称
     Set JiaKuan_TaiZhang = CreateObject("Scripting.Dictionary")
@@ -55,8 +80,8 @@ Sub 开始汇总()
     Set ZhuanXian_DaiBan = CreateObject("Scripting.Dictionary")
     Set ZhuanXian_ZiJin = CreateObject("Scripting.Dictionary")
     
-    Project_names = xlsheet_3_1.range("D1:D" & lastRow_3_1).Value ' 将表格数据存储到数组中
-    Subsidiary_companys = xlsheet_3_1.range("C1:C" & lastRow_3_1).Value
+    Project_names = xlsheet_3_1.range(Chr(FindColumnNumber_1_1 + 64) & "1:" & Chr(FindColumnNumber_1_1 + 64) & lastRow_3_1).Value ' 将表格数据存储到数组中
+    Subsidiary_companys = xlsheet_3_1.range(Chr(FindColumnNumber_1_2 + 64) & "1:" & Chr(FindColumnNumber_1_2 + 64) & lastRow_3_1).Value
     For i = 2 To lastRow_3_1
         Project_name = Project_names(i, 1)
         Subsidiary_company = Subsidiary_companys(i, 1)
@@ -153,24 +178,103 @@ Sub 开始汇总()
             Set xlsheet_3_6 = xlBook_3.Worksheets(SH.Name)
             
             ' 找到最后一行
-            lastRow_3_6 = xlsheet_3_6.Application.WorksheetFunction.CountA(xlsheet_3_6.range("D:D"))
+            lastRow_3_6 = xlsheet_3_6.Application.WorksheetFunction.CountA(xlsheet_3_6.range("G:G"))
             
             ' 查看工作表的 B 列是否有片区这一列，如果没有则在B列前插入 1 列空白列
             If xlsheet_3_6.range("A1").Value <> "状态" Then
                 xlsheet_3_6.range("A1").EntireColumn.Resize(, 1).Insert Shift:=xlToRight
                 xlsheet_3_6.range("A1") = "状态"
             End If
-            If xlsheet_3_6.range("B1").Value <> "片区" Then
+            If xlsheet_3_6.range("B1").Value <> "专业名称" Then
                 xlsheet_3_6.range("B1").EntireColumn.Resize(, 1).Insert Shift:=xlToRight
-                xlsheet_3_6.range("B1") = "片区"
+                xlsheet_3_6.range("B1") = "专业名称"
             End If
+            If xlsheet_3_6.range("C1").Value <> "单项名称" Then
+                xlsheet_3_6.range("C1").EntireColumn.Resize(, 1).Insert Shift:=xlToRight
+                xlsheet_3_6.range("C1") = "单项名称"
+            End If
+            If xlsheet_3_6.range("D1").Value <> "片区" Then
+                xlsheet_3_6.range("D1").EntireColumn.Resize(, 1).Insert Shift:=xlToRight
+                xlsheet_3_6.range("D1") = "片区"
+            End If
+            If xlsheet_3_6.range("E1").Value <> "分公司" Then
+                xlsheet_3_6.range("E1").EntireColumn.Resize(, 1).Insert Shift:=xlToRight
+                xlsheet_3_6.range("E1") = "分公司"
+            End If
+            
+            Dim lastColumn_3_6 As Integer
+            Dim FindColumnNumber_1 As Integer, FindColumnNumber_2 As Integer, FindColumnNumber_3 As Integer, FindColumnNumber_4 As Integer
+    
+            lastColumn_3_6 = xlsheet_3_6.UsedRange.Columns.Count
+    
+            For Column = 1 To lastColumn_3_6
+                k = xlsheet_3_6.cells(1, Column).Value
+                If k = "任务名称" Then
+                    FindColumnNumber_1 = Column
+                End If
+                If k = "任务创建时间" Then
+                    FindColumnNumber_2 = Column
+                End If
+                If k = "项目名称" Then
+                    FindColumnNumber_3 = Column
+                End If
+                If k = "设计编制完成时间" Then
+                    FindColumnNumber_4 = Column
+                End If
+            Next Column
+            
+            Task_names_6 = xlsheet_3_6.range(Chr(FindColumnNumber_1 + 64) & "1:" & Chr(FindColumnNumber_1 + 64) & lastRow_3_6).Value ' 将表格数据存储到数组中
+            Creation_times_6 = xlsheet_3_6.range(Chr(FindColumnNumber_2 + 64) & "1:" & Chr(FindColumnNumber_2 + 64) & lastRow_3_6).Value
+            Project_names_6 = xlsheet_3_6.range(Chr(FindColumnNumber_3 + 64) & "1:" & Chr(FindColumnNumber_3 + 64) & lastRow_3_6).Value
+            Completion_times_6 = xlsheet_3_6.range(Chr(FindColumnNumber_4 + 64) & "1:" & Chr(FindColumnNumber_4 + 64) & lastRow_3_6).Value
             
             ' 遍历每个单元格，并将不同的元素添加到字典中
             For i = 2 To lastRow_3_6
-                If xlsheet_3_6.cells(i, 4).Value Like "*北碚*" Or xlsheet_3_6.cells(i, 4).Value Like "*合川*" Or xlsheet_3_6.cells(i, 4).Value Like "*铜梁*" Or xlsheet_3_6.cells(i, 4).Value Like "*潼南*" Then
-                    xlsheet_3_6.cells(i, 2).Value = "北碚片区"
+                Project_name_6 = Project_names_6(i, 1)
+                '填写单项名称
+                If Project_name_6 Like "*集团专线*" Then
+                    xlsheet_3_6.range("C" & i) = "集团专线"
+                ElseIf Project_name_6 Like "*家庭宽带*" Then
+                    xlsheet_3_6.range("C" & i) = "家庭宽带"
+                ElseIf Project_name_6 Like "*商业宽带*" Then
+                    xlsheet_3_6.range("C" & i) = "商业宽带"
+                ElseIf Project_name_6 Like "*商宽重要客户预覆盖*" Then
+                    xlsheet_3_6.range("C" & i) = "预覆盖"
+                End If
+                    
+                '填写专业名称
+                a = xlsheet_3_6.range("C" & i)
+                If a = "集团专线" Or a = "预覆盖" Then
+                    xlsheet_3_6.range("B" & i) = "专线"
                 Else
-                    xlsheet_3_6.cells(i, 2).Value = "永川片区"
+                    xlsheet_3_6.range("B" & i) = "家宽"
+                End If
+                
+                '填写片区
+                If Project_name_6 Like "*北碚*" Or Project_name_6 Like "*合川*" Or Project_name_6 Like "*铜梁*" Or Project_name_6 Like "*潼南*" Then
+                    xlsheet_3_6.cells(i, 4).Value = "北碚片区"
+                    If Project_name_6 Like "*北碚*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "北碚"
+                    ElseIf Project_name_6 Like "*合川*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "合川"
+                    ElseIf Project_name_6 Like "*铜梁*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "铜梁"
+                    ElseIf Project_name_6 Like "*潼南*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "潼南"
+                    End If
+                Else
+                    xlsheet_3_6.cells(i, 4).Value = "永川片区"
+                    If Project_name_6 Like "*璧山*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "璧山"
+                    ElseIf Project_name_6 Like "*大足*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "大足"
+                    ElseIf Project_name_6 Like "*江津*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "江津"
+                    ElseIf Project_name_6 Like "*荣昌*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "荣昌"
+                    ElseIf Project_name_6 Like "*永川*" Then
+                        xlsheet_3_6.cells(i, 5).Value = "永川"
+                    End If
                 End If
             Next i
     
@@ -178,35 +282,9 @@ Sub 开始汇总()
             Set distinctElements = CreateObject("Scripting.Dictionary")
             Set Days = CreateObject("Scripting.Dictionary")
 
-            Dim column As Integer, lastColumn_3_6 As Integer
-            Dim FindColumnNumber_1 As Integer, FindColumnNumber_2 As Integer, FindColumnNumber_3 As Integer, FindColumnNumber_4 As Integer
-    
-            lastColumn_3_6 = xlsheet_3_6.UsedRange.Columns.Count
-    
-            For column = 1 To lastColumn_3_6
-                k = xlsheet_3_6.cells(1, column).Value
-                If k = "任务名称" Then
-                    FindColumnNumber_1 = column
-                End If
-                If k = "任务创建时间" Then
-                    FindColumnNumber_2 = column
-                End If
-                If k = "项目名称" Then
-                    FindColumnNumber_3 = column
-                End If
-                If k = "设计编制完成时间" Then
-                    FindColumnNumber_4 = column
-                End If
-            Next column
-            
-            
-            Task_names = xlsheet_3_6.range(Chr(FindColumnNumber_1 + 64) & "1:" & Chr(FindColumnNumber_1 + 64) & lastRow_3_6).Value ' 将表格数据存储到数组中
-            Creation_times = xlsheet_3_6.range(Chr(FindColumnNumber_2 + 64) & "1:" & Chr(FindColumnNumber_2 + 64) & lastRow_3_6).Value
-            Completion_times = xlsheet_3_6.range(Chr(FindColumnNumber_4 + 64) & "1:" & Chr(FindColumnNumber_4 + 64) & lastRow_3_6).Value
-            
             ' 遍历每个单元格，并将不同的元素添加到字典中
             For i = lastRow_3_6 To 2 Step -1
-                distinctElements(Creation_times(i, 1)) = Empty
+                distinctElements(Creation_times_6(i, 1)) = Empty
             Next i
             
             For Each element In distinctElements.keys
@@ -268,7 +346,7 @@ Sub 开始汇总()
                 Set Undistributed(i - 1) = CreateObject("Scripting.Dictionary")
                 Set Completed(i - 1) = CreateObject("Scripting.Dictionary")
                 For j = 2 To lastRow_3_1
-                    Project_name = Project_names(i, 1)
+                    Project_name = Project_names(j, 1)
                     If Project_name Like sheetName_1 Then
                         GongJian(i - 1).Add Project_name, 0
                         GongJian_Uncompleted(i - 1).Add Project_name, 0
@@ -284,15 +362,15 @@ Sub 开始汇总()
             
             
             ' 找到最后一行
-            lastRow_3_5 = xlsheet_3_5.Application.WorksheetFunction.CountA(xlsheet_3_5.range("F:F"))
+            lastRow_3_5 = xlsheet_3_5.Application.WorksheetFunction.CountA(xlsheet_3_5.range("H:H"))
             Dim data_DaiBan() As Variant
-            data_DaiBan = xlsheet_3_5.range("F1:F" & lastRow_3_5).Value  ' 将表格数据存储到数组中
+            data_DaiBan = xlsheet_3_5.range("H1:H" & lastRow_3_5).Value  ' 将表格数据存储到数组中
             
             ' 找到最后一行
-            lastRow_3_4 = xlsheet_3_4.Application.WorksheetFunction.CountA(xlsheet_3_4.range("F:F"))
+            lastRow_3_4 = xlsheet_3_4.Application.WorksheetFunction.CountA(xlsheet_3_4.range("H:H"))
             
             Dim data_YiBan() As Variant
-            data_YiBan = xlsheet_3_4.range("F1:F" & lastRow_3_4).Value  ' 将表格数据存储到数组中
+            data_YiBan = xlsheet_3_4.range("H1:H" & lastRow_3_4).Value  ' 将表格数据存储到数组中
 
             Dim foundIndex As Variant
             
@@ -300,38 +378,38 @@ Sub 开始汇总()
             ' 统计工建创建任务数，完成任务数
             For i = 2 To lastRow_3_6
                 For j = 1 To UBound(values) + 1
-                    Task_name = Task_names(i, 1)
-                    Creation_time = Creation_times(i, 1)
-                    Completion_time = Completion_times(i, 1)
-                    If Creation_time Like keys(j - 1) & "*" Then
-                        GongJian(j - 1)(Completion_time) = GongJian(j - 1)(Completion_time) + 1
-                        If Task_name Like "*转资*" Then
-                            ZhuanZi(j - 1)(Completion_time) = ZhuanZi(j - 1)(Completion_time) + 1
+                    Task_name_6 = Task_names_6(i, 1)
+                    Creation_time_6 = Creation_times_6(i, 1)
+                    Completion_time_6 = Completion_times_6(i, 1)
+                    Project_name_6 = Project_names_6(i, 1)
+                    If Creation_time_6 Like keys(j - 1) & "*" Then
+                        GongJian(j - 1)(Project_name_6) = GongJian(j - 1)(Project_name_6) + 1
+                        If Task_name_6 Like "*转资*" Then
+                            ZhuanZi(j - 1)(Project_name_6) = ZhuanZi(j - 1)(Project_name_6) + 1
                             xlsheet_3_6.cells(i, 1).Value = "转资"
                         Else
-                        foundIndex_DaiBan = xlsheet_3_6.Application.Match(Task_name, xlsheet_3_6.Application.Index(data_DaiBan, 0, 1), 0)
-                        If Len(xlsheet_3_6.cells(i, FindColumnNumber_4).Value) = 0 Then
-                            GongJian_Uncompleted(j - 1)(Completion_time) = GongJian_Uncompleted(j - 1)(Completion_time) + 1
-                            
-                            foundIndex_YiBan = xlsheet_3_6.Application.Match(Task_name, xlsheet_3_6.Application.Index(data_YiBan, 0, 1), 0)
+                        foundIndex_DaiBan = xlsheet_3_6.Application.Match(Task_name_6, xlsheet_3_6.Application.Index(data_DaiBan, 0, 1), 0)
+                        If Len(Completion_time_6) = 0 Then
+                            GongJian_Uncompleted(j - 1)(Project_name_6) = GongJian_Uncompleted(j - 1)(Project_name_6) + 1
+                            foundIndex_YiBan = xlsheet_3_6.Application.Match(Task_name_6, xlsheet_3_6.Application.Index(data_YiBan, 0, 1), 0)
                             If IsNumeric(foundIndex_DaiBan) Then
-                                Processing(j - 1)(Completion_time) = Processing(j - 1)(Completion_time) + 1
+                                Processing(j - 1)(Project_name_6) = Processing(j - 1)(Project_name_6) + 1
                                 xlsheet_3_6.cells(i, 1).Value = "设计编制中"
                             Else
                                 If IsNumeric(foundIndex_YiBan) Then
-                                    ShenHe(j - 1)(Completion_time) = ShenHe(j - 1)(Completion_time) + 1
+                                    ShenHe(j - 1)(Project_name_6) = ShenHe(j - 1)(Project_name_6) + 1
                                     xlsheet_3_6.cells(i, 1).Value = "项目经理审核中"
                                 Else
-                                    Undistributed(j - 1)(Completion_time) = Undistributed(j - 1)(Completion_time) + 1
+                                    Undistributed(j - 1)(Project_name_6) = Undistributed(j - 1)(Project_name_6) + 1
                                     xlsheet_3_6.cells(i, 1).Value = "未派发设计工单"
                                 End If
                             End If
                         Else
                             If IsNumeric(foundIndex_DaiBan) Then
-                                Processing(j - 1)(Completion_time) = Processing(j - 1)(Completion_time) + 1
+                                Processing(j - 1)(Project_name_6) = Processing(j - 1)(Project_name_6) + 1
                                 xlsheet_3_6.cells(i, 1).Value = "设计编制中"
                             Else
-                                Completed(j - 1)(Completion_time) = Completed(j - 1)(Completion_time) + 1
+                                Completed(j - 1)(Project_name_6) = Completed(j - 1)(Project_name_6) + 1
                                 xlsheet_3_6.cells(i, 1).Value = "流程结束"
                             End If
                         End If
@@ -354,8 +432,21 @@ Sub 开始汇总()
             Set xlsheet_3_7 = xlBook_3.Worksheets(SH.Name)
             ' 找到最后一行
             lastRow_3_7 = xlsheet_3_7.Application.WorksheetFunction.CountA(xlsheet_3_7.range("A:A"))
-            Project_names_7 = xlsheet_3_7.range("A1:A" & lastRow_3_7).Value ' 将表格数据存储到数组中
-            ZiJins = xlsheet_3_7.range("D1:D" & lastRow_3_7).Value
+            
+            Dim lastColumn_3_7 As Integer, FindColumnNumber_7_1 As Integer, FindColumnNumber_7_2 As Integer
+            'lastColumn_3_7 = xlsheet_3_7.UsedRange.Columns.Count
+            lastColumn_3_7 = 20
+            Biao_tou_7 = xlsheet_3_7.range("A2:" & Chr(lastColumn_3_7 + 64) & "2").Value
+            For Column = 1 To lastColumn_3_7
+                If Biao_tou_7(1, Column) = "项目名称" Then
+                    FindColumnNumber_7_1 = Column
+                End If
+                If Biao_tou_7(1, Column) = "合计立项批复金额" Then
+                    FindColumnNumber_7_2 = Column
+                End If
+            Next Column
+            Project_names_7 = xlsheet_3_7.range(Chr(FindColumnNumber_7_1 + 64) & "1:" & Chr(FindColumnNumber_7_1 + 64) & lastRow_3_7).Value ' 将表格数据存储到数组中
+            ZiJins = xlsheet_3_7.range(Chr(FindColumnNumber_7_2 + 64) & "1:" & Chr(FindColumnNumber_7_2 + 64) & lastRow_3_7).Value
 
             ' 统计第D列每个项目名称数量，并更新字典值
             For i = 4 To lastRow_3_7
@@ -381,27 +472,24 @@ Sub 开始汇总()
             ' 找到最后一行
             lastRow_3_8 = xlsheet_3_8.Application.WorksheetFunction.CountA(xlsheet_3_8.range("A:A"))
             
-            Dim lastColumn_3_8 As Integer
+            Dim lastColumn_3_8 As Integer, FindColumnNumber_8_1 As Integer, FindColumnNumber_8_2 As Integer
             lastColumn_3_8 = xlsheet_3_8.UsedRange.Columns.Count
-            Biao_tou = xlsheet_3_8.range("A2:" & Chr(lastColumn_3_8 + 64) & "2").Value
-    
-            For column = 1 To lastColumn_3_8
-                If Biao_tou(1, column) = "月份" Then
-                    FindColumnNumber_1 = column
-                    Exit For
+            Biao_tou_8 = xlsheet_3_8.range("A2:" & Chr(lastColumn_3_8 + 64) & "2").Value
+            For Column = 1 To lastColumn_3_8
+                If Biao_tou_8(1, Column) = "项目名称" Then
+                    FindColumnNumber_8_3 = Column
                 End If
-            Next column
-            
-            For column = lastColumn_3_8 To 1 Step -1
-                If Biao_tou(1, column) = "折后除税价总投资(元）" Then
-                    FindColumnNumber_2 = column
-                    Exit For
+                If Biao_tou_8(1, Column) = "月份" Then
+                    FindColumnNumber_8_1 = Column
                 End If
-            Next column
+                If Biao_tou_8(1, Column) = "折后除税价总投资(元）" Then
+                    FindColumnNumber_8_2 = Column
+                End If
+            Next Column
             
-            Project_names_8 = xlsheet_3_8.range("A1:A" & lastRow_3_8).Value
-            months = xlsheet_3_8.range(Chr(FindColumnNumber_1 + 64) & "1:" & Chr(FindColumnNumber_1 + 64) & lastRow_3_8).Value ' 将表格数据存储到数组中
-            Total_investments = xlsheet_3_8.range(Chr(FindColumnNumber_2 + 64) & "1:" & Chr(FindColumnNumber_2 + 64) & lastRow_3_6).Value
+            Project_names_8 = xlsheet_3_8.range(Chr(FindColumnNumber_8_3 + 64) & "1:" & Chr(FindColumnNumber_8_3 + 64) & lastRow_3_8).Value
+            months = xlsheet_3_8.range(Chr(FindColumnNumber_8_1 + 64) & "1:" & Chr(FindColumnNumber_8_1 + 64) & lastRow_3_8).Value ' 将表格数据存储到数组中
+            Total_investments = xlsheet_3_8.range(Chr(FindColumnNumber_8_2 + 64) & "1:" & Chr(FindColumnNumber_8_2 + 64) & lastRow_3_8).Value
             For i = 1 To lastRow_3_8
                 For j = 1 To UBound(values) + 1
                     If months(i, 1) Like keys(j - 1) & "*" Then
@@ -420,14 +508,13 @@ Sub 开始汇总()
     Dim copyRange As Object
     Dim pasteRange As Object
     Dim flag As Long
-    Dim lastColumn_3_1 As Integer
     
     For j = 4 To lastRow_3_1
-        If xlsheet_3_1.cells(j, 4).Value Like sheetName_1 Then
-            xlsheet_3_1.cells(j, 6).Value = 0
-            xlsheet_3_1.cells(j, 9).Value = 0
-            xlsheet_3_1.cells(j, 11).Value = 0
-            xlsheet_3_1.cells(j, 10).Value = 0
+        If Project_names(j, 1) Like sheetName_1 Then
+            xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value = 0
+            xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value = 0
+            xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value = 0
+            xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value = 0
         End If
     Next j
     
@@ -435,20 +522,21 @@ Sub 开始汇总()
     For i = 0 To UBound(values)
         If keys(i) = "2023/6" Then
             For j = 2 To lastRow_3_1
-                GongJian(i + 1)(xlsheet_3_1.cells(j, 4).Value) = GongJian(i + 1)(xlsheet_3_1.cells(j, 4).Value) + GongJian(i)(xlsheet_3_1.cells(j, 4).Value)
-                JiYao(i + 1)(xlsheet_3_1.cells(j, 4).Value) = JiYao(i + 1)(xlsheet_3_1.cells(j, 4).Value) + JiYao(i)(xlsheet_3_1.cells(j, 4).Value)
+                Project_name = Project_names(j, 1)
+                GongJian(i + 1)(Project_name) = GongJian(i + 1)(Project_name) + GongJian(i)(Project_name)
+                JiYao(i + 1)(Project_name) = JiYao(i + 1)(Project_name) + JiYao(i)(Project_name)
             Next j
         Else
             lastColumn_3_1 = xlsheet_3_1.UsedRange.Columns.Count
-            For column = lastColumn_3_1 To 1 Step -1
+            For Column = lastColumn_3_1 To 1 Step -1
                 a = "*" & Format(keys(i), "yyyy年m月") & "*"
-                If xlsheet_3_1.cells(3, column).Value Like a Then
+                If xlsheet_3_1.cells(3, Column).Value Like a Then
                     flag = 1
                     Exit For
                 End If
-            Next column
+            Next Column
             If flag = 1 Then
-                FindColumnNumber_1 = column
+                FindColumnNumber_1 = Column
                 flag = 0
                 For j = 4 To lastRow_3_1
                     Project_name = Project_names(j, 1)
@@ -458,10 +546,10 @@ Sub 开始汇总()
                         xlsheet_3_1.cells(j, FindColumnNumber_1 - 2).Value = GongJian_Uncompleted(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1 - 3).Value = xlsheet_3_1.cells(j, FindColumnNumber_1 - 4).Value - xlsheet_3_1.cells(j, FindColumnNumber_1 - 2).Value
                         xlsheet_3_1.cells(j, FindColumnNumber_1 - 1).Value = ShenHe(i)(Project_name)
-                        xlsheet_3_1.cells(j, 6).Value = xlsheet_3_1.cells(j, 6).Value + JiYao(i)(Project_name) / 10000
-                        xlsheet_3_1.cells(j, 9).Value = xlsheet_3_1.cells(j, 9).Value + GongJian(i)(Project_name)
-                        xlsheet_3_1.cells(j, 11).Value = xlsheet_3_1.cells(j, 11).Value + GongJian_Uncompleted(i)(Project_name)
-                        xlsheet_3_1.cells(j, 10).Value = xlsheet_3_1.cells(j, 10).Value + xlsheet_3_1.cells(j, FindColumnNumber_1 - 3).Value
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value + JiYao(i)(Project_name) / 10000
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value + GongJian(i)(Project_name)
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value + GongJian_Uncompleted(i)(Project_name)
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value + xlsheet_3_1.cells(j, FindColumnNumber_1 - 3).Value
                     End If
                 Next j
         
@@ -504,10 +592,10 @@ Sub 开始汇总()
                         xlsheet_3_1.cells(j, FindColumnNumber_1 + 3).Value = GongJian_Uncompleted(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1 + 2).Value = xlsheet_3_1.cells(j, FindColumnNumber_1 + 1).Value - xlsheet_3_1.cells(j, FindColumnNumber_1 + 3).Value
                         xlsheet_3_1.cells(j, FindColumnNumber_1 + 4).Value = ShenHe(i)(Project_name)
-                        xlsheet_3_1.cells(j, 6).Value = xlsheet_3_1.cells(j, 6).Value + JiYao(i)(Project_name) / 10000
-                        xlsheet_3_1.cells(j, 9).Value = xlsheet_3_1.cells(j, 9).Value + GongJian(i)(Project_name)
-                        xlsheet_3_1.cells(j, 11).Value = xlsheet_3_1.cells(j, 11).Value + GongJian_Uncompleted(i)(Project_name)
-                        xlsheet_3_1.cells(j, 10).Value = xlsheet_3_1.cells(j, 10).Value + xlsheet_3_1.cells(j, FindColumnNumber_1 + 2).Value
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value + JiYao(i)(Project_name) / 10000
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value + GongJian(i)(Project_name)
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value + GongJian_Uncompleted(i)(Project_name)
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value + xlsheet_3_1.cells(j, FindColumnNumber_1 + 2).Value
                     End If
                 Next j
             End If
@@ -521,76 +609,101 @@ Sub 开始汇总()
             ' 找到最后一行
             lastRow_3_9 = xlsheet_3_9.Application.WorksheetFunction.CountA(xlsheet_3_9.range("A:A"))
             
-            xlsheet_3_9.range("E3:I6").Value = 0
-            xlsheet_3_9.range("E8:I11").Value = 0
-            xlsheet_3_9.range("E14:I17").Value = 0
-            xlsheet_3_9.range("E19:I22").Value = 0
-            xlsheet_3_9.range("E26:I30").Value = 0
-            xlsheet_3_9.range("E32:I36").Value = 0
-            xlsheet_3_9.range("E39:I43").Value = 0
-            xlsheet_3_9.range("E45:I49").Value = 0
+            Dim lastColumn_3_9 As Integer
+            Dim FindColumnNumber_9_1 As Integer
+    
+            lastColumn_3_9 = xlsheet_3_9.UsedRange.Columns.Count
+            For Column = 1 To lastColumn_3_9
+                k = xlsheet_3_9.cells(2, Column).Value
+                If k = "项目名称" Then
+                    FindColumnNumber_9_1 = Column
+                End If
+            Next Column
             
-            Project_names_9 = xlsheet_3_9.range("D1:D" & lastRow_3_9).Value ' 将表格数据存储到数组中
+            xlsheet_3_9.range("F3:J6").Value = 0
+            xlsheet_3_9.range("F8:J11").Value = 0
+            xlsheet_3_9.range("F14:J17").Value = 0
+            xlsheet_3_9.range("F19:J22").Value = 0
+            xlsheet_3_9.range("F26:J30").Value = 0
+            xlsheet_3_9.range("F32:J36").Value = 0
+            xlsheet_3_9.range("F39:J43").Value = 0
+            xlsheet_3_9.range("F45:J49").Value = 0
+            
+            Project_names_9 = xlsheet_3_9.range(Chr(FindColumnNumber_9_1 + 64) & "1:" & Chr(FindColumnNumber_9_1 + 64) & lastRow_3_9).Value ' 将表格数据存储到数组中
             For i = 3 To lastRow_3_9
                 Project_name_9 = Project_names_9(i, 1)
                 If Project_name_9 Like sheetName_1 Then
                     For j = 0 To UBound(values)
-                        xlsheet_3_9.cells(i, 5).Value = xlsheet_3_9.cells(i, 5).Value + ZhuanZi(j)(Project_name_9)
-                        xlsheet_3_9.cells(i, 6).Value = xlsheet_3_9.cells(i, 6).Value + Undistributed(j)(Project_name_9)
-                        xlsheet_3_9.cells(i, 7).Value = xlsheet_3_9.cells(i, 7).Value + Processing(j)(Project_name_9)
-                        xlsheet_3_9.cells(i, 8).Value = xlsheet_3_9.cells(i, 8).Value + ShenHe(j)(Project_name_9)
-                        xlsheet_3_9.cells(i, 9).Value = xlsheet_3_9.cells(i, 9).Value + Completed(j)(Project_name_9)
-                        
+                        xlsheet_3_9.cells(i, 6).Value = xlsheet_3_9.cells(i, 6).Value + ZhuanZi(j)(Project_name_9)
+                        xlsheet_3_9.cells(i, 7).Value = xlsheet_3_9.cells(i, 7).Value + Undistributed(j)(Project_name_9)
+                        xlsheet_3_9.cells(i, 8).Value = xlsheet_3_9.cells(i, 8).Value + Processing(j)(Project_name_9)
+                        xlsheet_3_9.cells(i, 9).Value = xlsheet_3_9.cells(i, 9).Value + ShenHe(j)(Project_name_9)
+                        xlsheet_3_9.cells(i, 10).Value = xlsheet_3_9.cells(i, 10).Value + Completed(j)(Project_name_9)
                     Next j
                 End If
             Next i
         End If
     Next SH
     
+    Dim FindColumnNumber_1_7 As Integer, FindColumnNumber_1_8 As Integer, FindColumnNumber_1_9 As Integer, FindColumnNumber_1_10 As Integer
     lastColumn_3_1 = xlsheet_3_1.UsedRange.Columns.Count
     
-    For column = lastColumn_3_1 To 1 Step -1
-        If xlsheet_3_1.cells(3, column).Value = "已办信息（个）" Then
-            FindColumnNumber_2 = column
+    For Column = 1 To lastColumn_3_1
+        If xlsheet_3_1.cells(3, Column).Value = "立项批复(万元）" Then
+            FindColumnNumber_1_7 = Column
             Exit For
         End If
-    Next column
+    Next Column
     
-    For column = lastColumn_3_1 To 1 Step -1
-        If xlsheet_3_1.cells(3, column).Value = "待办信息（个）" Then
-            FindColumnNumber_3 = column
+    For Column = 1 To lastColumn_3_1
+        If xlsheet_3_1.cells(3, Column).Value = "工建台账小区名称（个）" Then
+            FindColumnNumber_1_8 = Column
             Exit For
         End If
-    Next column
+    Next Column
+    
+    For Column = lastColumn_3_1 To 1 Step -1
+        If xlsheet_3_1.cells(3, Column).Value = "已办信息（个）" Then
+            FindColumnNumber_1_9 = Column
+            Exit For
+        End If
+    Next Column
+    
+    For Column = lastColumn_3_1 To 1 Step -1
+        If xlsheet_3_1.cells(3, Column).Value = "待办信息（个）" Then
+            FindColumnNumber_1_10 = Column
+            Exit For
+        End If
+    Next Column
 
     For i = 4 To lastRow_3_1
         Project_name = Project_names(i, 1)
         Subsidiary_company = Subsidiary_companys(i, 1)
         If Subsidiary_company = "家宽" And Project_name Like sheetName_1 Then
-            xlsheet_3_1.cells(i, 5).Value = JiaKuan_ZiJin(Project_name)
-            xlsheet_3_1.cells(i, 8).Value = JiaKuan_TaiZhang(Project_name)
-            xlsheet_3_1.cells(i, FindColumnNumber_2).Value = JiaKuan_YiBan(Project_name)
-            xlsheet_3_1.cells(i, FindColumnNumber_3).Value = JiaKuan_DaiBan(Project_name)
+            xlsheet_3_1.cells(i, FindColumnNumber_1_7).Value = JiaKuan_ZiJin(Project_name)
+            xlsheet_3_1.cells(i, FindColumnNumber_1_8).Value = JiaKuan_TaiZhang(Project_name)
+            xlsheet_3_1.cells(i, FindColumnNumber_1_9).Value = JiaKuan_YiBan(Project_name)
+            xlsheet_3_1.cells(i, FindColumnNumber_1_10).Value = JiaKuan_DaiBan(Project_name)
         ElseIf Subsidiary_company = "专线" And Project_name Like sheetName_1 Then
-            xlsheet_3_1.cells(i, 5).Value = ZhuanXian_ZiJin(Project_name)
-            xlsheet_3_1.cells(i, 8).Value = ZhuanXian_TaiZhang(Project_name)
-            xlsheet_3_1.cells(i, FindColumnNumber_2).Value = ZhuanXian_YiBan(Project_name)
-            xlsheet_3_1.cells(i, FindColumnNumber_3).Value = ZhuanXian_DaiBan(Project_name)
+            xlsheet_3_1.cells(i, FindColumnNumber_1_7).Value = ZhuanXian_ZiJin(Project_name)
+            xlsheet_3_1.cells(i, FindColumnNumber_1_8).Value = ZhuanXian_TaiZhang(Project_name)
+            xlsheet_3_1.cells(i, FindColumnNumber_1_9).Value = ZhuanXian_YiBan(Project_name)
+            xlsheet_3_1.cells(i, FindColumnNumber_1_10).Value = ZhuanXian_DaiBan(Project_name)
         End If
         If Project_name Like sheetName_1 Then
-            xlsheet_3_1.cells(i, FindColumnNumber_2 - 1).Value = xlsheet_3_1.cells(i, 9).Value - xlsheet_3_1.cells(i, FindColumnNumber_2 - 3).Value
+            xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value = xlsheet_3_1.cells(i, 9).Value - xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 3).Value
             For j = 0 To UBound(values)
-                xlsheet_3_1.cells(i, FindColumnNumber_2 - 1).Value = xlsheet_3_1.cells(i, FindColumnNumber_2 - 1).Value + ZhuanZi(j)(Project_name)
+                xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value = xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value + ZhuanZi(j)(Project_name)
             Next j
         End If
-        If xlsheet_3_1.cells(i, 7).Value < 0 Then
-            ' 设置背景颜色
-            Set objRange = xlsheet_3_1.range("G" & i & ":G" & i)
-            objRange.Interior.Color = RGB(255, 255, 0)
-        Else
-            ' 设置背景颜色
-            Set objRange = xlsheet_3_1.range("G" & i & ":G" & i)
-            objRange.Interior.Color = RGB(255, 255, 255)
+        If Project_name Like sheetName_1 Then
+            If xlsheet_3_1.cells(i, FindColumnNumber_1_3 + 1).Value < 0 Then
+                Set objRange = xlsheet_3_1.range("H" & i & ":H" & i)
+                objRange.Interior.Color = RGB(255, 255, 0)
+            Else
+                Set objRange = xlsheet_3_1.range("H" & i & ":H" & i)
+                objRange.Interior.Color = RGB(255, 255, 255)
+            End If
         End If
     Next i
     
