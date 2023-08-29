@@ -226,7 +226,7 @@ Sub 开始汇总()
             Task_names_6 = xlsheet_3_6.range(Chr(FindColumnNumber_1 + 64) & "1:" & Chr(FindColumnNumber_1 + 64) & lastRow_3_6).Value ' 将表格数据存储到数组中
             Creation_times_6 = xlsheet_3_6.range(Chr(FindColumnNumber_2 + 64) & "1:" & Chr(FindColumnNumber_2 + 64) & lastRow_3_6).Value
             Project_names_6 = xlsheet_3_6.range(Chr(FindColumnNumber_3 + 64) & "1:" & Chr(FindColumnNumber_3 + 64) & lastRow_3_6).Value
-            Completion_times_6 = xlsheet_3_6.range(Chr(FindColumnNumber_4 + 64) & "1:" & Chr(FindColumnNumber_4 + 64) & lastRow_3_6).Value
+            'Completion_times_6 = xlsheet_3_6.range(Chr(FindColumnNumber_4 + 64) & "1:" & Chr(FindColumnNumber_4 + 64) & lastRow_3_6).Value
             
             ' 遍历每个单元格，并将不同的元素添加到字典中
             For i = 2 To lastRow_3_6
@@ -380,16 +380,16 @@ Sub 开始汇总()
                 For j = 1 To UBound(values) + 1
                     Task_name_6 = Task_names_6(i, 1)
                     Creation_time_6 = Creation_times_6(i, 1)
-                    Completion_time_6 = Completion_times_6(i, 1)
+                    'Completion_time_6 = Completion_times_6(i, 1)
                     Project_name_6 = Project_names_6(i, 1)
                     If Creation_time_6 Like keys(j - 1) & "*" Then
-                        GongJian(j - 1)(Project_name_6) = GongJian(j - 1)(Project_name_6) + 1
                         If Task_name_6 Like "*转资*" Then
                             ZhuanZi(j - 1)(Project_name_6) = ZhuanZi(j - 1)(Project_name_6) + 1
                             xlsheet_3_6.cells(i, 1).Value = "转资"
                         Else
+                        GongJian(j - 1)(Project_name_6) = GongJian(j - 1)(Project_name_6) + 1
                         foundIndex_DaiBan = xlsheet_3_6.Application.Match(Task_name_6, xlsheet_3_6.Application.Index(data_DaiBan, 0, 1), 0)
-                        If Len(Completion_time_6) = 0 Then
+                        If Len(xlsheet_3_6.cells(i, FindColumnNumber_4).Value) = 0 Then
                             GongJian_Uncompleted(j - 1)(Project_name_6) = GongJian_Uncompleted(j - 1)(Project_name_6) + 1
                             foundIndex_YiBan = xlsheet_3_6.Application.Match(Task_name_6, xlsheet_3_6.Application.Index(data_YiBan, 0, 1), 0)
                             If IsNumeric(foundIndex_DaiBan) Then
@@ -544,12 +544,12 @@ Sub 开始汇总()
                         xlsheet_3_1.cells(j, FindColumnNumber_1 - 4).Value = GongJian(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1).Value = JiYao(i)(Project_name) / 10000
                         xlsheet_3_1.cells(j, FindColumnNumber_1 - 2).Value = GongJian_Uncompleted(i)(Project_name)
-                        xlsheet_3_1.cells(j, FindColumnNumber_1 - 3).Value = xlsheet_3_1.cells(j, FindColumnNumber_1 - 4).Value - xlsheet_3_1.cells(j, FindColumnNumber_1 - 2).Value
+                        xlsheet_3_1.cells(j, FindColumnNumber_1 - 3).Value = GongJian(i)(Project_name) - GongJian_Uncompleted(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1 - 1).Value = ShenHe(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value + JiYao(i)(Project_name) / 10000
                         xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value + GongJian(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value + GongJian_Uncompleted(i)(Project_name)
-                        xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value + xlsheet_3_1.cells(j, FindColumnNumber_1 - 3).Value
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value + GongJian(i)(Project_name) - GongJian_Uncompleted(i)(Project_name)
                     End If
                 Next j
         
@@ -567,7 +567,7 @@ Sub 开始汇总()
                 xlsheet_3_1.cells(3, FindColumnNumber_1 + 3).Value = Format(keys(i), "yyyy年m月") & "设计编制未完成（个）"
                 xlsheet_3_1.cells(3, FindColumnNumber_1 + 4).Value = Format(keys(i), "yyyy年m月") & "项目经理审核中（个）"
                 xlsheet_3_1.cells(3, FindColumnNumber_1 + 5).Value = Format(keys(i), "yyyy年m月") & "设计投资（万元）"
-                For j = FindColumnNumber_1 To FindColumnNumber_1 + 5
+                For j = FindColumnNumber_1_ To FindColumnNumber_1 + 5
                     xlsheet_3_1.cells(8, j).Formula = "=SUM(" & Chr(j + 64) & "4:" & Chr(j + 64) & "7)"
                     xlsheet_3_1.cells(13, j).Formula = "=SUM(" & Chr(j + 64) & "9:" & Chr(j + 64) & "12)"
                     xlsheet_3_1.cells(14, j).Formula = "=" & Chr(j + 64) & "8+" & Chr(j + 64) & "13"
@@ -590,12 +590,12 @@ Sub 开始汇总()
                         xlsheet_3_1.cells(j, FindColumnNumber_1 + 1).Value = GongJian(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1 + 5).Value = JiYao(i)(Project_name) / 10000
                         xlsheet_3_1.cells(j, FindColumnNumber_1 + 3).Value = GongJian_Uncompleted(i)(Project_name)
-                        xlsheet_3_1.cells(j, FindColumnNumber_1 + 2).Value = xlsheet_3_1.cells(j, FindColumnNumber_1 + 1).Value - xlsheet_3_1.cells(j, FindColumnNumber_1 + 3).Value
+                        xlsheet_3_1.cells(j, FindColumnNumber_1 + 2).Value = GongJian(i)(Project_name) - GongJian_Uncompleted(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1 + 4).Value = ShenHe(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_3).Value + JiYao(i)(Project_name) / 10000
                         xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_4).Value + GongJian(i)(Project_name)
                         xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_6).Value + GongJian_Uncompleted(i)(Project_name)
-                        xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value + xlsheet_3_1.cells(j, FindColumnNumber_1 + 2).Value
+                        xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value = xlsheet_3_1.cells(j, FindColumnNumber_1_5).Value + GongJian(i)(Project_name) - GongJian_Uncompleted(i)(Project_name)
                     End If
                 Next j
             End If
@@ -691,10 +691,10 @@ Sub 开始汇总()
             xlsheet_3_1.cells(i, FindColumnNumber_1_10).Value = ZhuanXian_DaiBan(Project_name)
         End If
         If Project_name Like sheetName_1 Then
-            xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value = xlsheet_3_1.cells(i, 9).Value - xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 3).Value
-            For j = 0 To UBound(values)
-                xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value = xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value + ZhuanZi(j)(Project_name)
-            Next j
+            xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value = xlsheet_3_1.cells(i, 10).Value - xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 3).Value
+            'For j = 0 To UBound(values)
+                'xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value = xlsheet_3_1.cells(i, FindColumnNumber_1_9 - 1).Value + ZhuanZi(j)(Project_name)
+            'Next j
         End If
         If Project_name Like sheetName_1 Then
             If xlsheet_3_1.cells(i, FindColumnNumber_1_3 + 1).Value < 0 Then

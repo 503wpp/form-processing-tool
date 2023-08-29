@@ -13,7 +13,6 @@ Module=导出待办数据; 导出待办数据.bas
 Module=选择PSM进度汇总模板路径; 选择PSM进度汇总模板路径.bas
 Module=开始汇总; 开始汇总.bas
 Module=拆分标题; 拆分标题.bas
-Object=Excel.Sheet.12; et
 IconForm="Form1"
 Startup="Form1"
 ExeName32="工程2.6.exe"
